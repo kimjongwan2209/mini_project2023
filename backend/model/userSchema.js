@@ -25,8 +25,9 @@ const usersSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  site: {
+    type: Object,
+  },
 });
 
-export default () => {
-  const schemaUser = mongoose.model("users", usersSchema);
-};
+export const users = mongoose.model("users", usersSchema);

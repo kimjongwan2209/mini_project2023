@@ -11,4 +11,4 @@ const starbucksSchema = new mongoose.Schema({
   },
 });
 
-export const schemaStarbucks = mongoose.model("starbucks", starbucksSchema);
+export const starbucks = mongoose.model("starbucks", starbucksSchema);
