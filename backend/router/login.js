@@ -1,5 +1,6 @@
 import express from "express";
 import { users } from "../model/userSchema.js";
+import { token } from "../model/tokenSchema.js";
 import {
   checkEmail,
   getWelcomeTemplate,
@@ -10,6 +11,11 @@ import {
   checked_user_password,
   checked_user_phone,
 } from "../checked_function/checked_id.js";
+import {
+  checkValidationPhone,
+  getToken,
+  sendTokenToSMS,
+} from "../checked_function/checked_token.js";
 import { createBoardAPI } from "../scrapping/scraping.js";
 
 const router = express.Router();
@@ -82,6 +88,27 @@ router.post("/user", async (req, res) => {
       site: data_scrapping,
     });
     return res.status(200).json({ _id: user_id._id });
+  }
+});
+
+//전화번호 토큰 발급
+router.post("/tokens/phone", async (req, res) => {
+  const { phone } = req.body;
+
+  const phoneNumber = await token.findOne({ phone });
+  if (!phoneNumber) {
+    const new_token = getToken();
+    if (new_token === false) {
+      return res.status(400).json({ message: "숫자가 올바르지 않습니다." });
+    } else return await token.create({ new_token, phone, isAuth: false });
+  }
+  if (phoneNumber.token) {
+    const new_token = getToken();
+    await token.updateOne({ new_token });
+    sendTokenToSMS(phone, new_token);
+    return res.status(200).json({
+      message: `${phone}으로 인증 문자가 전송되었습니다.`,
+    });
   }
 });
 
