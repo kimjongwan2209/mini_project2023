@@ -12,4 +12,4 @@ const tokenSchema = new mongoose.Schema({
   isAuth: Boolean,
 });
 
-export const token = mongoose.model("token", tokenSchema);
+export const tokens = mongoose.model("tokens", tokenSchema);

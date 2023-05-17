@@ -1,6 +1,6 @@
 import express from "express";
 import { users } from "../model/userSchema.js";
-import { token } from "../model/tokenSchema.js";
+import { tokens } from "../model/tokenSchema.js";
 import {
   checkEmail,
   getWelcomeTemplate,
@@ -95,20 +95,37 @@ router.post("/user", async (req, res) => {
 router.post("/tokens/phone", async (req, res) => {
   const { phone } = req.body;
 
-  const phoneNumber = await token.findOne({ phone });
+  const phoneNumber = await tokens.findOne({ phone });
   if (!phoneNumber) {
     const new_token = getToken();
     if (new_token === false) {
       return res.status(400).json({ message: "숫자가 올바르지 않습니다." });
-    } else return await token.create({ new_token, phone, isAuth: false });
-  }
-  if (phoneNumber.token) {
+    } else
+      await tokens.create({ token: new_token, phone: phone, isAuth: false });
+  } else {
     const new_token = getToken();
-    await token.updateOne({ new_token });
+    await tokens.updateOne({ token: new_token });
     sendTokenToSMS(phone, new_token);
     return res.status(200).json({
       message: `${phone}으로 인증 문자가 전송되었습니다.`,
     });
+  }
+});
+
+//전화번호 토큰 인증
+router.patch("/tokens/phone", async (req, res) => {
+  const { phone, token } = req.body;
+  const phoneNumber = await tokens.findOne({ phone });
+  if (!phoneNumber) {
+    return res.status(400).json({ message: "존재하지 않는 번호입니다." });
+  }
+  if (phoneNumber.token !== token) {
+    return res
+      .status(400)
+      .json({ message: "입력하신 숫자가 인증번호와 다릅니다." });
+  } else {
+    await tokens.updateOne({ token: token, isAuth: true });
+    return res.status(200).json({ message: "인증되었습니다." });
   }
 });
 

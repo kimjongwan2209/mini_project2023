@@ -2,6 +2,7 @@ import { getToday } from "./utils.js";
 import nodemailer from "nodemailer";
 import "dotenv/config";
 
+//이메일 형식 체크
 export function checkEmail(email) {
   if (email === undefined || email.includes("@") === false) {
     return false;
@@ -10,8 +11,8 @@ export function checkEmail(email) {
     return false;
   }
 }
-//최종 출력
 
+//가입환영 플랫폼 생성
 export function getWelcomeTemplate(name, email, phone, prefer) {
   const mytemplate = `
         <html>
@@ -29,6 +30,7 @@ export function getWelcomeTemplate(name, email, phone, prefer) {
   return mytemplate;
 }
 
+//플랫폼 전송
 export async function sendTemplateToEmail(email, result) {
   //console.log(email + "이메일로 가입환영템플릿 " + result + "를 전송합니다.");
   const email_user = process.env.EMAIL_USER;

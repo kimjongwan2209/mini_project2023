@@ -12,6 +12,7 @@ export function checkValidationPhone(phone) {
   }
 }
 
+//토큰 생성
 export function getToken() {
   const count = 6;
   if (count === undefined) {
@@ -28,6 +29,7 @@ export function getToken() {
   return result;
 }
 
+//발급된 토큰 전송
 export async function sendTokenToSMS(phone, token) {
   //console.log(myphone + "번호로 인증번호" + token + "를 전송합니다!!!");
   const SMS_KEY = process.env.SMS_KEY;
@@ -41,5 +43,5 @@ export async function sendTokenToSMS(phone, token) {
     from: SMS_SENDER,
     text: `[***주의!!*** 보이스피싱아님!!] "종완닷컴" 안녕하세요. 고객님 요청하신 인증번호[${token}] 을(를) 입력해주세요.`,
   });
-  console.log(result);
+  return;
 }
