@@ -7,10 +7,10 @@ export function checkEmail(email) {
     return false;
   }
   if (email.match(/\s/g) !== null) {
-    console.log("입력하신 이메일에 공백이 존재합니다.");
+    return false;
   }
-  //최종 출력
 }
+//최종 출력
 
 export function getWelcomeTemplate(name, email, phone, prefer) {
   const mytemplate = `
