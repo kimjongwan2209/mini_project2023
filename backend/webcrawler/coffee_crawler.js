@@ -30,4 +30,4 @@ export async function startCrawling() {
   }
   await browser.close();
 }
-startCrawling();
+//startCrawling();

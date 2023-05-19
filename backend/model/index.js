@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
+import "dotenv/config";
+
 mongoose.set("strictQuery", true);
 
 const connect = async () => {
-  await mongoose
-    .connect("mongodb://127.0.0.1:27017/miniproject")
-    .catch((err) => console.log(err));
+  const database_adress = process.env.DATABASE_ADDRESS;
+  await mongoose.connect(database_adress).catch((err) => console.log(err));
 };
 
 mongoose.connection.on("error", (err) => {
