@@ -9,6 +9,14 @@ const authSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  login_date: {
+    type: Date,
+    required: true,
+  },
+  expires_date: {
+    type: Date,
+    required: true,
+  },
 });
 
 export const authies = mongoose.model("authies", authSchema);

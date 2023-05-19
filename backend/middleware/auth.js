@@ -1,8 +1,9 @@
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
-import { users } from "../model/userSchema";
+import { users } from "../model/userSchema.js";
+import { authies } from "../model/authSchema.js";
 
-export const exported = (req, res, next) => {
+export default (req, res, next) => {
   const { authorization } = req.headers;
   const [authType, authToken] = (authorization || "").split(" ");
 
@@ -17,24 +18,24 @@ export const exported = (req, res, next) => {
     if (myToken == "jwt expired") {
       // access token 만료
       const userInfo = jwt.decode(authToken, "secret");
-      const user_id = userInfo.user_id;
+      const name = userInfo.name;
       let refresh_token;
-      user.login(user_id).then((u) => {
+      authies.find({ name }).then((u) => {
         // refresh 토큰을 가지고 오는 코드
         refresh_token = u.refresh_token;
         const myRefreshToken = verifyToken(refresh_token);
         if (myRefreshToken == "jwt expired") {
           res.status(400).send({ errorMessage: "로그인이 필요합니다." });
         } else {
-          const myNewToken = jwt.sign({ user_id: u.user_id }, "secret", {
+          const myNewToken = jwt.sign({ name: u.user_id }, "secret", {
             expiresIn: "1200s",
           });
           res.send({ message: "new token", myNewToken });
         }
       });
     } else {
-      const { user_id } = jwt.verify(authToken, "secret");
-      user.login(user_id).then((u) => {
+      const { name } = jwt.verify(authToken, "secret");
+      authies.find({ name }).then((u) => {
         res.locals.user = u;
         next();
       });
