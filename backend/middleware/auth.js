@@ -1,7 +1,7 @@
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import { users } from "../model/userSchema.js";
-import { authies } from "../model/authSchema.js";
+import { auths } from "../model/authSchema.js";
 
 export default (req, res, next) => {
   const { authorization } = req.headers;
@@ -20,7 +20,7 @@ export default (req, res, next) => {
       const userInfo = jwt.decode(authToken, "secret");
       const name = userInfo.name;
       let refresh_token;
-      authies.find({ name }).then((u) => {
+      auths.find({ name }).then((u) => {
         // refresh 토큰을 가지고 오는 코드
         refresh_token = u.refresh_token;
         const myRefreshToken = verifyToken(refresh_token);
@@ -35,7 +35,7 @@ export default (req, res, next) => {
       });
     } else {
       const { name } = jwt.verify(authToken, "secret");
-      authies.find({ name }).then((u) => {
+      auths.find({ name }).then((u) => {
         res.locals.user = u;
         next();
       });

@@ -2,13 +2,18 @@ import express from "express";
 import middleware from "../middleware/auth.js";
 import jwt from "jsonwebtoken";
 import { users } from "../model/userSchema.js";
-import { authies } from "../model/authSchema.js";
+import { auths } from "../model/authSchema.js";
 import * as bcrypt from "bcrypt";
 
 const router = express.Router();
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const tokenObject = {};
 
+//로그인
 router.post("/login", async (req, res) => {
   const { name, pwd } = req.body;
 
@@ -35,9 +40,9 @@ router.post("/login", async (req, res) => {
           return res.status(400).json({ message: "로그인에 실패하였습니다." });
         }
 
-        authies.find({ name }).then((result) => {
+        auths.find({ name }).then((result) => {
           if (result.length === 0) {
-            authies
+            auths
               .create({
                 name,
                 refresh_token: refreshToken,
@@ -52,7 +57,7 @@ router.post("/login", async (req, res) => {
           }
 
           if (result.length !== 0) {
-            authies
+            auths
               .updateOne({
                 name,
                 refreshToken: refreshToken,
@@ -77,6 +82,16 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     res.status(400).send({ message: err + " : 로그인 접속불가" });
   }
+});
+
+//로그아웃
+
+router.delete("/logout", middleware, async (req, res) => {
+  const { user_id } = req.cookies;
+
+  const find_for_logout = await auths.deleteOne({ name: user_id });
+  console.log(find_for_logout);
+  return res.status(200).json({ message: "로그아웃 되었습니다." });
 });
 
 export default router;
